@@ -7,29 +7,35 @@ import curses
 def main(stdscr):
     curses.start_color()
     curses.use_default_colors()
+    custom_colors()
+    #create_colors()
     while True:
         # Clear screen
         stdscr.clear()
-        k = 0
-        adds = list(range(6))
         while True:
-            for i in range(5):
-                stdscr.addstr(i+1, 1, f'{curses.color_pair(i)}', 45)
-                #stdscr.addstr(i, 0, 'ss' )
-            #out = '\n'.join([options[add + k] for add in adds])
-            #s = stdscr.getmaxyx()
-            #stdscr.addstr(1, 0,str(s), curses.color_pair(3)) 
-            #stdscr.addstr(2, 0, out)
-            stdscr.refresh()
+            nn = 5
+            stdscr.addstr(2, 1, f'{curses.color_pair(nn)}', curses.color_pair(nn))
+            #stdscr.addstr(2, 1, f'{curses.color_pair(2)}')
             stdscr.getkey()
-            #k = int(stdscr.getkey(0, 0))
+            #stdscr.refresh()
 
-
-def show_color(stdscr):
+def create_colors():
     curses.start_color()
     curses.use_default_colors()
     for i in range(0, curses.COLORS):
-        curses.init_pair(i + 1, i, 56 - 1)
+        curses.init_pair(i, i, -1)
+
+def custom_colors():
+    curses.start_color()
+    curses.use_default_colors()
+    curses.init_pair(5, 3, 4)
+    #for i in range(0, curses.COLORS):
+    #    curses.init_pair(i, i, -1)
+
+def show_color(stdscr):
+    # From
+    # https://stackoverflow.com/questions/18551558/how-to-use-terminal-color-palette-with-curses
+    create_colors()
     stdscr.addstr(0, 0, '{0} colors available'.format(curses.COLORS))
     maxy, maxx = stdscr.getmaxyx()
     maxx = maxx - maxx % 5
@@ -41,12 +47,13 @@ def show_color(stdscr):
             x = (x + 5) % maxx
             if x == 0:
                 y += 1
-    except curses.ERR:
+    except: # curses.ERR:
+        raise
         pass
     stdscr.getch()
 
 
-if False:
+if True:
     wrapper(main)
 else:
     wrapper(show_color)
