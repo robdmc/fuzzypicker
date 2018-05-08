@@ -87,7 +87,15 @@ def main(stdscr):
         val = chr(key)
         if key == BACKSPACE and letters:
             letters.pop(-1)
-        elif key in {ENTER, ESCAPE}:
+        elif key == ENTER:
+            return
+        elif key == ESCAPE:
+            stdscr.nodelay(True)
+            print('*'*80)
+            try:
+                stdscr.getch()
+            except:
+                pass
             return
         elif key in UP and do_render:
             highlighted = max([0, highlighted - 1])
