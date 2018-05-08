@@ -33,16 +33,28 @@ class Color:
     def __init__(self):
         curses.start_color()
         curses.use_default_colors()
+
+        # search_line
         curses.init_pair(1, 253, 17)
-        #curses.init_pair(2, 27, -1)
+
+        # highlighted
         curses.init_pair(2, 127, -1)
+
+        # footer
+        curses.init_pair(3, 240, -1)
+
+
     @property
-    def bk(self):
+    def search_color(self):
+        return curses.color_pair(1)
+
+    @property
+    def highlighted(self):
         return curses.color_pair(2)
 
     @property
-    def kc(self):
-        return curses.color_pair(1)
+    def footer(self):
+        return curses.color_pair(3)
 
 
 class LineCreator:
@@ -103,16 +115,16 @@ class FuzzyPicker:
         else:
             self.vis_items = self.items[:self.max_items]
 
-        lc.draw(letter_str, color_pair=c.bk)
+        lc.draw(letter_str, color_pair=c.highlighted)
         lc.draw('')
         for line_num, item in enumerate(self.vis_items):
-            #lc.draw(item[:maxx-2])
             if line_num == self.highlighted:
-                color_pair = c.kc
+                color_pair = c.search_color
             else:
                 color_pair = None
             lc.draw(item[:maxx - 2], color_pair=color_pair)
 
+        lc.draw('(Enter to select. Esc to exit)...', color_pair=c.footer)
         try:
             return screen.getch()
         except KeyboardInterrupt:
@@ -224,14 +236,16 @@ if __name__ == '__main__':
         'zip lighters',
         'kite board',
         'lemonaid',
+        'wonderful',
+        'wives',
+        'sister',
+        'cough',
+        'medicine',
     ]
 
     if args.colors:
         wrapper(show_color)
     else:
-        ##wrapper(main)
-        #picker = FuzzyPicker(lines)
-        #wrapper(picker)
         selected = picker(lines)
         print(f'\n\nselected = {selected!r}')
 
