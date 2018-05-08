@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import os
 from curses import wrapper
 import curses
 import textwrap
@@ -147,6 +148,8 @@ if __name__ == '__main__':
 
     # get the args
     args = parser.parse_args()
+
+    os.environ.setdefault('ESCDELAY', '25')
 
     if args.colors:
         wrapper(show_color)
