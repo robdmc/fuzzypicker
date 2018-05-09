@@ -32,14 +32,19 @@ class Color:
         curses.start_color()
         curses.use_default_colors()
 
+        # init_pair(color_num, foreground, background)
+
         # search_line
-        curses.init_pair(1, 253, 17)
+        # curses.init_pair(1, 253, 17)
+        curses.init_pair(1, 0, 6)
 
         # highlighted
-        curses.init_pair(2, 127, -1)
+        # curses.init_pair(2, 127, -1)
+        curses.init_pair(2, 5, -1)
 
         # footer
-        curses.init_pair(3, 240, -1)
+        # curses.init_pair(3, 240, -1)
+        curses.init_pair(3, 3, -1)
 
     @property
     def search_color(self):
