@@ -20,8 +20,6 @@ movies = [
     'One Day',
     'Not Easily Broken',
     'No Reservations',
-    'Nick and Norah's Infinite Playlist',
-    'New Year's Eve',
     'My Week with Marilyn',
     'Music and Lyrics',
     'Monte Carlo',
