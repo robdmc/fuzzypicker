@@ -10,23 +10,21 @@ from enum import Enum
 from curses import ascii
 from fuzzywuzzy import process
 
+
 class Response(Enum):
     keepon = 1
     escape = 2
     enter = 3
 
 
-
-
 BACKSPACE = 127
 ESCAPE = 27
 ENTER = 10
 UP = {259, 353}
-DOWN =  {9, 258}
+DOWN = {9, 258}
 IGNORED = {260, 261, BACKSPACE, ENTER, ESCAPE}
 IGNORED = IGNORED.union(UP)
 IGNORED = IGNORED.union(DOWN)
-
 
 
 class Color:
@@ -42,7 +40,6 @@ class Color:
 
         # footer
         curses.init_pair(3, 240, -1)
-
 
     @property
     def search_color(self):
@@ -65,18 +62,12 @@ class LineCreator:
     def draw(self, val, color_pair=None, y=None, x=None):
         val = str(val)
         line_len = self.maxx - 1
-        #template = f'{{val: <{line_len}}}'
-        #out = template.format(val=val)
         out = f' {val: <{line_len}}'
-
-
 
         if y is None or x is None:
             args = [out]
-            #self.screen.addstr('this is a really long line ' * 3, c.cb)
         else:
             args = [y, x, val]
-            #self.screen.addstr(y, x, 'this is a really long line ' * 3, c.cb)
 
         if color_pair:
             args.append(color_pair)
@@ -85,17 +76,19 @@ class LineCreator:
 
 
 class FuzzyPicker:
-    def __init__(self, items, default=None, sort_inputs=True):
-        items = [str(it) for it in items]
-        if sort_inputs:
-            self.items = sorted(items)
-        else:
-            self.items = items
+    def __init__(
+            self, items, default=None,
+            filler='Start typing to search',
+            footer='(Enter to select.  Esc to exit)...'):
+        self.items = sorted({str(it) for it in items})
 
         self.letters = []
         self.highlighted = 0
         self.max_items = 0
         self.selected = None
+        self.default = default
+        self.filler = filler
+        self.footer = footer
 
     def render(self, screen):
         screen.clear()
@@ -104,16 +97,33 @@ class FuzzyPicker:
         self.max_items = maxy - 4
         c = Color()
         lc = LineCreator(screen)
-        letter_str = ''.join(self.letters)[:maxx-2]
+        letter_str = ''.join(self.letters)[:maxx - 2]
+        # Use filler for search area of nothing entered yet
         if not letter_str:
-            letter_str = 'Start typing to search'
+            letter_str = self.filler
 
+        # If letters have been entered, use fuzzy search for vis_items
         if self.letters:
             self.vis_items = process.extract(
                 letter_str, self.items, limit=self.max_items)
             self.vis_items = [ii[0] for ii in self.vis_items]
+        # If no letters, use begining of vis_items
         else:
             self.vis_items = self.items[:self.max_items]
+
+            # If a default provided, make sure it is selected
+            if self.default is not None:
+                # Try finding and popping the default from the list
+                try:
+                    ind = self.vis_items.index(self.default)
+                    self.vis_items.pop(ind)
+
+                # If the default not found, just pop the last item
+                except ValueError:
+                    self.vis_items.pop(-1)
+
+                # Push the default as the first item
+                self.vis_items.insert(0, self.default)
 
         lc.draw(letter_str, color_pair=c.highlighted)
         lc.draw('')
@@ -124,7 +134,7 @@ class FuzzyPicker:
                 color_pair = None
             lc.draw(item[:maxx - 2], color_pair=color_pair)
 
-        lc.draw('(Enter to select. Esc to exit)...', color_pair=c.footer)
+        lc.draw(self.footer, color_pair=c.footer)
         try:
             return screen.getch()
         except KeyboardInterrupt:
@@ -175,10 +185,12 @@ def create_colors():
     for i in range(0, curses.COLORS):
         curses.init_pair(i, i, -1)
 
+
 def custom_colors():
     curses.start_color()
     curses.use_default_colors()
     curses.init_pair(1, 16, 14)
+
 
 def show_color(screen):
     # From
@@ -195,14 +207,24 @@ def show_color(screen):
             x = (x + 5) % maxx
             if x == 0:
                 y += 1
-    except: # curses.ERR:
+    except:  # flake8: noqa
         raise
-        pass
     screen.getch()
 
 
-def picker(lines):
-    fp = FuzzyPicker(lines)
+def picker(
+        items, default=None,
+        filler='Start typing to search',
+        footer='(Enter to select.  Esc to exit)...'):
+    """
+    items: a list of items to choose from
+    filler: text that goes a search placeholder
+    footer: text that goes at the bottom of the screen
+
+    """
+
+    fp = FuzzyPicker(
+        items, default=default, filler=filler, footer=footer)
     wrapper(fp)
     return fp.selected
 
@@ -241,11 +263,19 @@ if __name__ == '__main__':
         'sister',
         'cough',
         'medicine',
+        'aaaaaaaaaaaaaaaaaaaaaaand that\'s all',
     ]
 
     if args.colors:
         wrapper(show_color)
     else:
-        selected = picker(lines)
+        selected = picker(
+            lines,
+            default='fish',
+            filler='fillter',
+            footer='footer'
+
+        )
+
         print(f'\n\nselected = {selected!r}')
 
