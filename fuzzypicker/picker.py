@@ -17,12 +17,12 @@ class Response(Enum):
     enter = 3
 
 
-BACKSPACE = 127
+BACKSPACE = {127, 263}
 ESCAPE = 27
 ENTER = 10
 UP = {259, 353}
 DOWN = {9, 258}
-IGNORED = {260, 261, BACKSPACE, ENTER, ESCAPE}
+IGNORED = {260, 261, ENTER, ESCAPE}.union(BACKSPACE)
 IGNORED = IGNORED.union(UP)
 IGNORED = IGNORED.union(DOWN)
 
@@ -154,7 +154,7 @@ class FuzzyPicker:
         elif key == ESCAPE:
             return Response.escape
 
-        elif key == BACKSPACE and self.letters:
+        elif key in BACKSPACE and self.letters:
             self.highlighted = 0
             self.letters.pop(-1)
             return Response.keepon
