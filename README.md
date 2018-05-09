@@ -1,6 +1,6 @@
 # Fuzzy Picker
 This package is a thin wrapper providing interactive capability for the
-excellent [FuzzyWuzzy Python Library] (https://github.com/seatgeek/fuzzywuzzy).
+excellent [FuzzyWuzzy Python Library](https://github.com/seatgeek/fuzzywuzzy).
 
 Fuzzy picker is intended to be used in your console scripts.  Let's say that you
 had a script that needed to select from a variety of options.  As an example, 
