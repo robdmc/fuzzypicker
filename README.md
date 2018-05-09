@@ -33,6 +33,6 @@ movies = [
     'Life as We Know It',
 ]
 
-print(f'selected_movie = {picker(movies)})
+print(f'selected_movie = {picker(movies)}')
 ```
 
