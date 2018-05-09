@@ -7,6 +7,8 @@ had a script that needed to select from a variety of options.  As an example,
 let's say you want your users to choose from a selection of movies.
 
 ```python
+from fuzzypicker import picker
+
 movies = [
     'Rachel Getting Married',
     'Penelope',
@@ -30,4 +32,7 @@ movies = [
     'Love & Other Drugs',
     'Life as We Know It',
 ]
+
+selected_movie = picker(movies)
 ```
+
