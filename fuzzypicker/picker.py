@@ -29,6 +29,7 @@ IGNORED = IGNORED.union(DOWN)
 
 class Color:
     def __init__(self):
+        curses.initscr()
         curses.start_color()
         curses.use_default_colors()
 
